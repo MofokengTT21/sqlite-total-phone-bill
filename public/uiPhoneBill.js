@@ -8,6 +8,7 @@ document.addEventListener('alpine:init', () => {
         callTimerInterval: null,
         totalBill: null,
         pricePlanName: '',
+        pricePlanDescription:'',
         smsPrice: '',
         callPrice: '',
         editingPlanId: null,
@@ -15,7 +16,7 @@ document.addEventListener('alpine:init', () => {
         isAdmin: false,
         apiUrl: (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
                 ? 'http://localhost:3000' 
-                : 'https://phone-bill-calc.vercel.app',
+                : 'https://phone-bill-calc.onrender.com',
 
         init() {
             this.fetchPricePlans();
@@ -32,6 +33,7 @@ document.addEventListener('alpine:init', () => {
             }
             this.pricePlan = plan.plan_name;
             this.pricePlanName = plan.plan_name;
+            this.pricePlanDescription = plan.description;
             this.smsPrice = plan.sms_price;
             this.callPrice = plan.call_price;
             this.editingPlanId = plan.id;
@@ -88,12 +90,14 @@ document.addEventListener('alpine:init', () => {
                 if (this.editingPlanId) {
                     await axios.patch(`${this.apiUrl}/price_plans/${this.editingPlanId}`, {
                         plan_name: this.pricePlanName,
+                        description: this.pricePlanDescription,
                         sms_price: this.smsPrice,
                         call_price: this.callPrice
                     });
                 } else {
                     await axios.post(`${this.apiUrl}/price_plans`, {
                         plan_name: this.pricePlanName,
+                        decription: this.pricePlanDescription,
                         sms_price: this.smsPrice,
                         call_price: this.callPrice
                     });
@@ -118,6 +122,7 @@ document.addEventListener('alpine:init', () => {
 
         resetForm() {
             this.pricePlanName = '';
+            this.pricePlanDescription = '';
             this.smsPrice = 0;
             this.callPrice = 0;
             this.editingPlanId = null;

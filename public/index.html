@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <header class="p-4 lg:p-6 bg-white shadow-md mb-6 sm:mb-0 flex justify-center sm:justify-start">
+    <header class="p-4 lg:p-6 bg-white shadow-md mb-0 flex justify-center sm:justify-start">
         <img class="w-full sm:w-auto sm:h-12 xl:h-16" src="img/logo.png" alt="Company Logo">
     </header>
 
@@ -23,108 +23,118 @@
         </div>
     </div>
 
-    <div class="max-w-lg mx-auto bg-pink-50 rounded-3xl shadow-lg p-8" x-data="phoneBillCalculator">
-        <!-- Admin Checkbox -->
-        <div class="mb-4">
-            <label class="inline-flex items-center">
-                <input type="checkbox" x-model="isAdmin" class="form-checkbox text-pink-500">
-                <span class="ml-2 text-gray-800 font-semibold">Admin</span>
-            </label>
-        </div>
+    <div class="px-3">
+        <div class="max-w-lg mx-auto bg-pink-50 mb-12 rounded-3xl shadow-lg p-4 sm:p-8 " x-data="phoneBillCalculator">
+            <!-- Admin Checkbox -->
+            <div class="mb-4">
+                <label class="inline-flex items-center">
+                    <input type="checkbox" x-model="isAdmin" class="form-checkbox text-pink-500">
+                    <span class="ml-2 text-gray-800 font-semibold">Admin</span>
+                </label>
+            </div>
 
-        <!-- Price Plans -->
-        <div class="mb-8">
-            <label for="price_plan" class="block text-gray-800 text-xl font-bold mb-4">Price Plan:</label>
-            <div class="grid grid-cols-1 gap-6">
-                <template x-for="plan in pricePlans" :key="plan.id">
-                    <div @click="selectPricePlan(plan)"
-                        :class="{'border-pink-500 bg-pink-200': pricePlan === plan.plan_name}"
-                        class="relative cursor-pointer shadow-lg rounded-2xl p-6 border-4 border-transparent hover:border-pink-500 transition bg-pink-100">
-                        <span x-text="plan.plan_name" class="text-gray-900 text-2xl font-bold"></span>
-                        <div class="flex gap-2 mt-2">
-                            <p
-                                class="text-white px-3 py-2 rounded-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-xs font-semibold inline-block">
-                                SMS rate: R<span x-text="plan.sms_price.toFixed(2)"></span>
-                            </p>
-                            <p
-                                class="text-white px-3 py-2 rounded-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-xs font-semibold inline-block">
-                                Call rate: R<span x-text="plan.call_price.toFixed(2)"></span> /min
-                            </p>
-                        </div>
-                        <button @click.stop="deletePricePlan(plan.id)" x-show="isAdmin"
-                            class="absolute top-11 right-5 text-red-600 hover:text-red-800 font-bold">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
+            <!-- Create/Edit Price Plan Form -->
+            <div x-show="isAdmin" class="mb-5 bg-white rounded-3xl shadow-lg p-6" id="create">
+                <h2 class="text-gray-800 text-xl font-bold mb-4">Create/Edit Price Plan</h2>
+                <form @submit.prevent="savePricePlan">
+                    <div class="mb-4">
+                        <label for="planName" class="block text-gray-800 font-semibold mb-2">Plan Name</label>
+                        <input type="text" id="planName" x-model="pricePlanName"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
+                            placeholder="Plan Name" required>
                     </div>
-                </template>
+                    <div class="mb-4">
+                        <label for="planDescription" class="block text-gray-800 font-semibold mb-2">Description</label>
+                        <textarea rows="2" id="planDescription" x-model="pricePlanDescription"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
+                            placeholder="Description" required></textarea>
+                    </div>
+                    <div class="flex mb-4 items-center">
+                        <div class="w-1/2 pr-2">
+                            <label for="smsPrice" class="block text-gray-800 font-semibold mb-2">SMS Price</label>
+                            <input type="number" step="any" id="smsPrice" x-model="smsPrice"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
+                                placeholder="SMS Price" required>
+                        </div>
+                        <div class="w-1/2 pl-2">
+                            <label for="callPrice" class="block text-gray-800 font-semibold mb-2">Call Price</label>
+                            <input type="number" step="any" id="callPrice" x-model="callPrice"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
+                                placeholder="Call Price (per min)" required>
+                        </div>
+                    </div>
+                    <button type="submit"
+                        class="bg-gradient-to-r from-pink-500 to-red-500 hover:from-red-500 hover:to-pink-500 text-white font-bold py-4 px-6 rounded-lg w-full flex items-center justify-center">
+                        <i class="fas fa-save mr-2"></i> Save Price Plan
+                    </button>
+                </form>
+            </div>
+
+            <!-- Price Plans -->
+            <div class="mb-8">
+                <label for="price_plan" class="block text-gray-800 text-xl font-bold mb-4">Find a plan that fits your
+                    lifestyle.</label>
+                <div class="grid grid-cols-1 gap-6">
+                    <template x-for="plan in pricePlans" :key="plan.id">
+                        <div @click="selectPricePlan(plan)"
+                            :class="{'border-pink-500 bg-pink-200': pricePlan === plan.plan_name}"
+                            class="relative cursor-pointer shadow-lg rounded-2xl p-6 border-4 border-transparent hover:border-pink-500 transition bg-pink-100">
+                            <span x-text="plan.plan_name" class="text-gray-900 text-2xl font-bold"></span>
+                            <p class="mt-1 mb-4 text-gray-700" x-text="plan.description"> </p>
+                            <div class="flex gap-2 mt-2">
+                                <p
+                                    class="text-white px-3 py-2 rounded-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-xs font-semibold inline-block">
+                                    SMS rate: R<span x-text="plan.sms_price.toFixed(2)"></span>
+                                </p>
+                                <p
+                                    class="text-white px-3 py-2 rounded-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-xs font-semibold inline-block">
+                                    Call rate: R<span x-text="plan.call_price.toFixed(2)"></span> /min
+                                </p>
+                            </div>
+                            <button @click.stop="deletePricePlan(plan.id)" x-show="isAdmin"
+                                class="absolute top-7 right-5 text-red-600 hover:text-red-800 font-bold">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Call and SMS Buttons -->
+            <div x-show="pricePlan && !isAdmin" class="grid grid-cols-2 gap-6 mb-8">
+                <div class="relative flex flex-col justify-between">
+                    <button @click="startCallTimer"
+                        class="bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-bold py-4 px-6 rounded-lg w-full flex items-center justify-center">
+                        <i class="fas fa-phone-alt mr-2"></i> Call
+                        <span x-show="callInProgress" x-text="formatTime(callDurationSeconds)" class="ml-1"></span>
+                    </button>
+
+                    <button @click="stopCallTimer" x-show="callInProgress"
+                        class="bg-gradient-to-r from-pink-500 to-red-500 hover:from-red-500 hover:to-pink-500 text-white font-bold py-4 px-6 rounded-lg w-full mt-4 flex items-center justify-center">
+                        <i class="fas fa-phone-slash mr-2"></i> End Call
+                    </button>
+                </div>
+
+                <div class="relative">
+                    <button @click="incrementSmsCount"
+                        class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white font-bold py-4 px-6 rounded-lg w-full h-full flex items-center justify-center">
+                        <i class="fas fa-sms mr-2"></i> SMS <span x-text="smsCount" class="ml-1"></span>
+                    </button>
+                </div>
+            </div>
+
+            <div x-show="pricePlan && !isAdmin" class="mb-8">
+                <button @click="calculateBill"
+                    class="bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-pink-500 hover:to-indigo-500 text-white font-bold py-4 px-6 rounded-lg w-full flex items-center justify-center">
+                    <i class="fas fa-calculator mr-2"></i> Calculate Bill
+                </button>
+            </div>
+
+            <div x-show="totalBill !== null && !isAdmin"
+                class="bg-pink-200 border-l-4 border-pink-500 text-pink-700 p-4 rounded-lg">
+                <p class="font-bold text-lg">Total Bill: R<span x-text="totalBill.toFixed(2)"></span></p>
             </div>
         </div>
-
-        <!-- Call and SMS Buttons with Message -->
-        <div x-show="pricePlan" class="grid grid-cols-2 gap-6 mb-8">
-            <div class="relative flex flex-col justify-between">
-                <button @click="startCallTimer"
-                    class="bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-bold py-4 px-6 rounded-lg w-full flex items-center justify-center">
-                    <i class="fas fa-phone-alt mr-2"></i> Call
-                    <span x-show="callInProgress" x-text="formatTime(callDurationSeconds)" class="ml-1"></span>
-                </button>
-
-                <button @click="stopCallTimer" x-show="callInProgress"
-                    class="bg-gradient-to-r from-pink-500 to-red-500 hover:from-red-500 hover:to-pink-500 text-white font-bold py-4 px-6 rounded-lg w-full mt-4 flex items-center justify-center">
-                    <i class="fas fa-phone-slash mr-2"></i> End Call
-                </button>
-            </div>
-
-            <div class="relative">
-                <button @click="incrementSmsCount"
-                    class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white font-bold py-4 px-6 rounded-lg w-full h-full flex items-center justify-center">
-                    <i class="fas fa-sms mr-2"></i> SMS <span x-text="smsCount" class="ml-1"></span>
-                </button>
-            </div>
-        </div>
-
-        <div x-show="pricePlan" class="mb-8">
-            <button @click="calculateBill"
-                class="bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-pink-500 hover:to-indigo-500 text-white font-bold py-4 px-6 rounded-lg w-full flex items-center justify-center">
-                <i class="fas fa-calculator mr-2"></i> Calculate Bill
-            </button>
-        </div>
-
-        <div x-show="totalBill !== null" class="bg-pink-200 border-l-4 border-pink-500 text-pink-700 p-4 rounded-lg">
-            <p class="font-bold text-lg">Total Bill: R<span x-text="totalBill.toFixed(2)"></span></p>
-        </div>
-
-        <!-- Create/Edit Price Plan Form -->
-        <div x-show="isAdmin" class="mt-8 bg-white rounded-3xl shadow-lg p-6">
-            <h2 class="text-gray-800 text-xl font-bold mb-4">Create/Edit Price Plan</h2>
-            <form @submit.prevent="savePricePlan">
-                <div class="mb-4">
-                    <label for="planName" class="block text-gray-800 font-semibold mb-2">Plan Name:</label>
-                    <input type="text" id="planName" x-model="pricePlanName"
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
-                        placeholder="Plan Name" required>
-                </div>
-                <div class="mb-4">
-                    <label for="smsPrice" class="block text-gray-800 font-semibold mb-2">SMS Price:</label>
-                    <input type="number" step="any" id="smsPrice" x-model="smsPrice"
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
-                        placeholder="SMS Price" required>
-                </div>
-                <div class="mb-4">
-                    <label for="callPrice" class="block text-gray-800 font-semibold mb-2">Call Price (per
-                        minute):</label>
-                    <input type="number" step="any" id="callPrice" x-model="callPrice"
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
-                        placeholder="Call Price" required>
-                </div>
-                <button type="submit"
-                    class="bg-gradient-to-r from-pink-500 to-red-500 hover:from-red-500 hover:to-pink-500 text-white font-bold py-4 px-6 rounded-lg w-full flex items-center justify-center">
-                    <i class="fas fa-save mr-2"></i> Save Price Plan
-                </button>
-            </form>
-        </div>
-
-
     </div>
 
     <script src="uiPhoneBill.js"></script>
