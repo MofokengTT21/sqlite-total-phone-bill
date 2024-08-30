@@ -97,7 +97,7 @@ document.addEventListener('alpine:init', () => {
                 } else {
                     await axios.post(`${this.apiUrl}/price_plans`, {
                         plan_name: this.pricePlanName,
-                        decription: this.pricePlanDescription,
+                        description: this.pricePlanDescription,
                         sms_price: this.smsPrice,
                         call_price: this.callPrice
                     });
