@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "plan_name": "Chatterbox plan",
+        "sms_price": 0.5,
+        "call_price": 0.2,
+        "description": "This plan is perfect for someone who loves to talk! It has unlimited calls, but each SMS costs R0.50"
+    },
+    {
+        "id": 3,
+        "plan_name": "Texter's Delight",
+        "sms_price": 0.2,
+        "call_price": 1,
+        "description": "This one is ideal for someone who prefers texting. It offers unlimited SMS, but each call costs R1.00 per minute."
+    },
+    {
+        "id": 4,
+        "plan_name": "Balanced Bundle",
+        "sms_price": 0.3,
+        "call_price": 0.5,
+        "description": "This plan is a mix of both. You get 100 free SMS and 100 free call minutes. After that, each SMS costs R0.30 and each call minute costs R0.70"
+    }
+]
