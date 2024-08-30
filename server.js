@@ -3,10 +3,14 @@ const app = express();
 const cors = require('cors');
 app.use(cors()); 
 const db = require("./db/pricePlans");
+const knex = require("./db/knex");
 app.use(express.json());
 
+const fs = require('fs');
+const path = require('path');
+
 app.use(express.urlencoded({ extended: true }));
- 
+ 
 function calculateTotalBill(actions, pricePlanData) {
     const { sms_price, call_price } = pricePlanData;
     const { smsCount, callDurationSeconds } = actions; 
@@ -26,6 +30,7 @@ app.post("/api/phonebill/", async (req, res) => {
 app.post("/price_plans", async (req, res) => {
     const results = await db.createPricePlan(req.body);
     res.status(200).json({id: results[0]});
+    scheduleDataReset();
 });
 
 // Return list of all Price plans
@@ -38,14 +43,43 @@ app.get("/price_plans", async (req, res) => {
 app.patch("/price_plans/:id", async (req, res) => {
     const id = await db.updatePricePlan(req.params.id, req.body);
     res.status(200).json({id});
+    scheduleDataReset();
 });
 
 // Delete a Price plan
 app.delete("/price_plans/:id", async (req, res) => {
     await db.deletePricePlan(req.params.id);
     res.status(200).json({ success: true });
+    scheduleDataReset();
 });
 
-  
+const resetInterval = 2 * 60 * 1000;
+let resetTimeout = null; 
+
+function resetData() {
+  const initialDataPath = path.join(__dirname, 'db', 'initialData.json');
+  const data = fs.readFileSync(initialDataPath, 'utf8');
+  const initialData = JSON.parse(data);
+  knex.transaction(trx => {
+    return trx('pricePlans').del()  
+      .then(() => {
+        return trx('pricePlans').insert(initialData); 
+      });
+  })
+  .then(() => {
+    console.log('Data reset and repopulated successful!');
+  })
+  .catch(error => {
+    console.error('Error resetting and repopulating data:', error);
+  });
+  resetTimeout = null;
+}
+
+function scheduleDataReset() {
+    if (!resetTimeout) { 
+        resetTimeout = setTimeout(resetData, resetInterval);
+    }
+}
+
 PORT = 3000;
-app.listen(PORT, () => console.log(`App running on port ${PORT}`))
+app.listen(PORT, () => console.log(`App running on port ${PORT}`));
