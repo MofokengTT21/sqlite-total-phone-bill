@@ -123,8 +123,8 @@ document.addEventListener('alpine:init', () => {
         resetForm() {
             this.pricePlanName = '';
             this.pricePlanDescription = '';
-            this.smsPrice = 0;
-            this.callPrice = 0;
+            this.smsPrice = '';
+            this.callPrice = '';
             this.editingPlanId = null;
         }
     }));
