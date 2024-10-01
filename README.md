@@ -140,6 +140,4 @@ After price plan changes (create, update, delete), the database automatically re
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-```
 
-This README includes details of the SQLite3 and Knex.js functionality with the updated price plan logic you added.
