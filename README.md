@@ -1,29 +1,30 @@
-# Phone Bill Calculation API with SQLite3
+# Phone Bill Calculation API with SQLite3 and Knex.js
 
-This project is an API built with **Express.js** and **SQLite3** for calculating phone bills based on various price plans. It allows users to create, read, update, and delete price plans while calculating the total phone bill based on SMS and call usage.
+This project is a RESTful API built with **Express.js**, **SQLite3**, and **Knex.js** to manage phone bill price plans and calculate total phone bills based on SMS usage and call durations. The API allows you to create, read, update, delete price plans, and calculate phone bills dynamically.
 
 ## Features
 
-- Calculate the total phone bill based on price plans, SMS count, and call duration.
-- Create new price plans with customizable SMS and call rates.
-- View a list of all price plans.
-- Update existing price plans.
-- Delete specific price plans.
-- Automatically reset the database to initial data after updates (with a 2-minute delay).
+- **Phone Bill Calculation**: Calculate total phone bills based on the selected price plan, SMS count, and call duration.
+- **CRUD Operations for Price Plans**: 
+  - Create new price plans with customizable SMS and call rates.
+  - Retrieve a list of all available price plans.
+  - Update specific price plans.
+  - Delete price plans by ID.
+- **Dynamic Price Plan Lookup**: Retrieve price plan details by name to calculate total bills.
 
 ## Technologies Used
 
-- **Node.js**: Server-side runtime.
-- **Express.js**: Web framework for handling routes and middleware.
-- **SQLite3**: Lightweight SQL database for storing price plans.
-- **Knex.js**: SQL query builder for interacting with the SQLite3 database.
-- **Cors**: For handling cross-origin requests.
-- **File System (fs)**: For reading and resetting the database with initial data.
+- **Node.js**: Backend server.
+- **Express.js**: Web framework for building the API.
+- **SQLite3**: Embedded SQL database for managing price plans.
+- **Knex.js**: SQL query builder to interact with the SQLite3 database.
+- **Cors**: Cross-Origin Resource Sharing middleware.
+- **File System (fs)**: For handling data reset and initial data loading.
 
 ## Prerequisites
 
-- **Node.js** installed on your machine.
-- **SQLite3** for database management.
+- **Node.js** installed.
+- **SQLite3** for database storage.
 
 ## Getting Started
 
@@ -31,12 +32,12 @@ This project is an API built with **Express.js** and **SQLite3** for calculating
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/MofokengTT21/phone-bill-api-sqlite3.git
+   git clone https://github.com/MofokengTT21/sqlite-total-phone-bill.git
    ```
 
 2. Navigate into the project directory:
    ```bash
-   cd phone-bill-api-sqlite3
+   cd sqlite-total-phone-bill
    ```
 
 3. Install the dependencies:
@@ -44,13 +45,13 @@ This project is an API built with **Express.js** and **SQLite3** for calculating
    npm install
    ```
 
-4. Set up your database. Make sure you have an `initialData.json` file in the `db/` folder to populate your price plans data.
+4. Ensure you have an `initialData.json` file in the `db/` directory to populate your price plan data.
 
 ### Running the Application
 
 1. Start the server:
    ```bash
-   npm start
+   node server.js
    ```
 
 2. The API will be running at `http://localhost:3000/`.
@@ -79,33 +80,66 @@ This project is an API built with **Express.js** and **SQLite3** for calculating
 
 ### **Price Plans Management**
 
-- **GET** `/price_plans`: Get a list of all available price plans.
+- **GET** `/price_plans`: Retrieve a list of all available price plans.
 
 - **POST** `/price_plans`: Create a new price plan.
 
   **Request body example**:
   ```json
   {
-    "name": "Premium",
+    "plan_name": "Premium",
     "sms_price": 0.05,
     "call_price": 0.10
   }
   ```
 
-- **PATCH** `/price_plans/:id`: Update an existing price plan.
+- **PATCH** `/price_plans/:id`: Update an existing price plan by ID.
 
-- **DELETE** `/price_plans/:id`: Delete a price plan by ID.
+  **Request body example**:
+  ```json
+  {
+    "sms_price": 0.06,
+    "call_price": 0.12
+  }
+  ```
 
-### Data Reset Feature
+- **DELETE** `/price_plans/:id`: Delete a price plan by its ID.
 
-After a price plan is created, updated, or deleted, the database will automatically reset to the initial data stored in `initialData.json` after 2 minutes. This feature ensures that your database is repopulated with a fresh set of data.
+  **Response**:
+  ```json
+  {
+    "success": true
+  }
+  ```
+
+### **Price Plan Lookup**
+
+- **GET** `/price_plans/:plan_name`: Retrieve a price plan by its name to calculate the bill.
+
+## Dynamic Price Plan Functions
+
+The following database functions are used to manage price plans and calculate phone bills:
+
+- **createPricePlan(pricePlan)**: Inserts a new price plan into the database.
+- **getAllPricePlans()**: Fetches all available price plans.
+- **deletePricePlan(id)**: Deletes a price plan based on its ID.
+- **updatePricePlan(id, pricePlan)**: Updates a specific price plan by ID.
+- **getPricePlanByName(planName)**: Fetches a price plan by name, used in calculating the total bill.
 
 ## File Structure
 
-- `db/`: Contains the SQLite3 database setup and initial data for price plans.
+- `db/`: Contains the SQLite3 database setup, `knex` configuration, and initial data file (`initialData.json`).
 - `public/`: Contains static files like the front-end HTML (if applicable).
-- `server.js`: The main server file with all API routes.
+- `server.js`: Main server file that defines the API routes.
+- `db/pricePlans.js`: Contains the database query logic for CRUD operations using Knex.js.
+
+## Data Reset Feature
+
+After price plan changes (create, update, delete), the database automatically resets to the initial data stored in `initialData.json` after 2 minutes. This ensures that test data is always refreshed.
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```
+
+This README includes details of the SQLite3 and Knex.js functionality with the updated price plan logic you added.
